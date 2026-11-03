@@ -17,6 +17,7 @@ Why does Medicare spend more per person in some counties than others? This proje
 - **Outlier:** Miller County, GA spent $29,853 per beneficiary in 2024, more than twice the national average, with skilled nursing facility spending about 10 times the national level.
 
 - **More than half the variation is unexplained, and it is regional and persistent.** Florida, Oklahoma, Texas, and Mississippi spend $1,500 to $2,100 more per beneficiary than the model predicts; Hawaii, Alaska, Oregon, and Washington spend $2,000 to $3,700 less. A county's unexplained spending in 2014 to 2018 correlates 0.88 with 2020 to 2024.
+- **More spending does not buy better outcomes.** Counties in the top fifth of unexplained spending have an 18.8% 30-day readmission rate vs. 16.1% in the bottom fifth. Each extra $1,000 per beneficiary goes with about 0.6 points more readmissions and 30 more ER visits per 1,000, robust to weighting, non-hospital spending only, and county fixed effects.
 
 These are associations across counties, not causal effects.
 
@@ -59,7 +60,7 @@ notebooks/
   01_build_database.ipynb   load CMS data, clean, pull Census income/poverty
   02_merge.ipynb            reshape RUCC, merge everything, check match rates
   03_charts.ipynb           exploratory charts; exports the website charts
-  04_regression.ipynb       OLS and weighted regressions, robustness checks, unexplained-spending map
+  04_regression.ipynb       OLS and weighted regressions, robustness checks, unexplained spending, outcomes
   05_export_app_data.ipynb  z-scores for matching; writes app/data/*.parquet
   plot_style.py             shared chart colors and fonts
 app/

@@ -53,7 +53,7 @@
   .byline { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 0 40px; font-size: 15px; color: var(--muted); }
   .byline a { font-weight: 600; }
 
-  .findings { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 0 0 48px; padding: 0; list-style: none; }
+  .findings { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 0 0 48px; padding: 0; list-style: none; }
   .findings li { padding: 18px 18px 16px; background: var(--plane); border-radius: 10px; }
   .findings .num { display: block; margin-bottom: 6px; font-size: 32px; font-weight: 650; line-height: 1.1; letter-spacing: -.02em; color: var(--ink); }
   .findings .what { font-size: 15px; line-height: 1.45; }
@@ -69,6 +69,7 @@
   .chart.map    { height: 540px; }
   .chart.miller { height: 470px; }
   .chart.unexplained { height: 480px; }
+  .chart.outcomes { height: 420px; }
   figcaption { margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--muted); }
   figcaption strong { color: var(--ink-2); font-weight: 600; }
 
@@ -101,6 +102,7 @@
     .chart.map    { height: 300px; }
     .chart.miller { height: 520px; }
     .chart.unexplained { height: 270px; }
+    .chart.outcomes { height: 400px; }
     .sidebar { padding: 4px 16px 16px; }
   }
 </style>
@@ -122,6 +124,7 @@
 <ul class="findings" aria-label="Key findings">
   <li><span class="num">37%</span><span class="what">growth in spending per beneficiary from 2014 to 2024, in metro and rural counties alike (nominal dollars)</span></li>
   <li><span class="num">$620</span><span class="what">less per beneficiary in rural counties than in similar metro counties, after controlling for income, poverty, age, and Medicaid enrollment</span></li>
+  <li><span class="num">18.8%</span><span class="what">readmission rate in the counties that spend most above prediction, vs. 16.1% in those that spend least: more spending, not better outcomes</span></li>
   <li><span class="num">10&times;</span><span class="what">the national average on skilled nursing care in Miller County, GA, the highest-spending county in 2024</span></li>
 </ul>
 
@@ -192,6 +195,17 @@
   </figure>
   <p>The pattern is regional. Accounting for population, Florida, Oklahoma, Texas, Mississippi, and New Jersey spend about $1,500 to $2,100 more per beneficiary than predicted, while Hawaii, Alaska, Oregon, New Mexico, Vermont, and Washington spend about $2,000 to $3,700 less. Miller County, GA is the largest outlier, about $16,700 above its prediction.</p>
   <p>The gaps are also persistent. A county's unexplained spending in 2014 to 2018 is strongly correlated with its unexplained spending in 2020 to 2024 (correlation of 0.88), which suggests lasting features of each place rather than year-to-year noise. Research on regional variation, most famously the Dartmouth Atlas of Health Care, has linked gaps like these to local practice patterns and the supply of hospitals and specialists, as well as to differences in health that county averages miss. This analysis does not separate those explanations.</p>
+</section>
+
+<section>
+  <h2>More spending does not buy better outcomes</h2>
+  <p>If high-spending counties were buying better care, they should have fewer bad outcomes. On the two outcome measures CMS reports for counties, they have more. Counties that spend the most relative to their prediction have a 30-day hospital readmission rate of 18.8%, compared with 16.1% in counties that spend the least. ER visits are higher too, though the rise is less steady.</p>
+  <figure>
+    <iframe class="chart outcomes" src="charts/outcomes.html" title="Bar charts of readmission rate and ER visits for five groups of counties, from lowest to highest unexplained spending, 2024" loading="lazy"></iframe>
+    <figcaption><strong>Outcomes by unexplained spending, 2024.</strong> Counties split into five equal groups by actual minus predicted spending per beneficiary. Averages weighted by number of beneficiaries.</figcaption>
+  </figure>
+  <p>The same pattern shows up in a regression on all years with the same controls: each additional $1,000 per beneficiary goes with about 0.6 percentage points more readmissions and about 30 more ER visits per 1,000 beneficiaries (both p&lt;0.001). It holds when counties are weighted by beneficiaries, and when only spending outside the hospital is counted, which makes it unlikely that the link is just readmissions themselves adding to the bill. It also holds with county fixed effects, comparing each county with itself over time.</p>
+  <p>This matches a long-standing finding from the Dartmouth Atlas: places that spend more on Medicare patients do not get better results. It does not show that spending causes worse outcomes. Sicker populations could drive both, and readmissions and ER visits are only two measures of quality.</p>
 </section>
 
 <aside class="sidebar" aria-labelledby="miller">
