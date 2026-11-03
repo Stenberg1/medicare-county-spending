@@ -1,0 +1,21 @@
+# Secrets: the Census API key lives here
+.env
+
+# Python virtual environment (about 650 MB, Mac-specific; rebuild with requirements.txt)
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+
+# Database: rebuilt from data/ by notebooks 01 and 02
+*.duckdb
+*.duckdb.wal
+
+# Large raw file (57 MB): download instructions are in the README
+data/2014-2024-Medicare-data.csv
+
+# Scratch notebooks (may contain keys or leftover cells)
+notebooks/Untitled*.ipynb
+
+# Mac and editor files
+.DS_Store
+.vscode/

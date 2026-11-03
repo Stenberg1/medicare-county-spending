@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medicare Spending Across US Counties | George Stenberg</title>
+<meta name="description" content="How Medicare spending per beneficiary varies across about 3,000 US counties from 2014 to 2024, and what income, poverty, and rurality explain.">
+<style>
+  :root {
+    color-scheme: light;
+    --surface: #fcfcfb;
+    --plane: #f4f3ef;
+    --ink: #0b0b0b;
+    --ink-2: #52514e;
+    --muted: #6f6d68;
+    --rule: #e1e0d9;
+    --accent: #2a78d6;
+    --accent-ink: #1c5cab;
+    --rural: #eb6834;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--surface); }
+  body {
+    margin: 0;
+    padding: 0 20px;
+    background: var(--surface);
+    color: var(--ink-2);
+    font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding-block: 56px 72px; }
+  a { color: var(--accent-ink); text-underline-offset: 2px; }
+  a:hover { color: var(--accent); }
+
+  .eyebrow { margin: 0 0 12px; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  h1 { margin: 0 0 16px; font-size: clamp(30px, 5vw, 42px); line-height: 1.15; letter-spacing: -.02em; color: var(--ink); }
+  .dek { margin: 0 0 20px; font-size: 20px; line-height: 1.5; color: var(--ink-2); }
+  .byline { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 0 40px; font-size: 15px; color: var(--muted); }
+  .byline a { font-weight: 600; }
+
+  .findings { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 0 0 48px; padding: 0; list-style: none; }
+  .findings li { padding: 18px 18px 16px; background: var(--plane); border-radius: 10px; }
+  .findings .num { display: block; margin-bottom: 6px; font-size: 32px; font-weight: 650; line-height: 1.1; letter-spacing: -.02em; color: var(--ink); }
+  .findings .what { font-size: 15px; line-height: 1.45; }
+
+  h2 { margin: 56px 0 10px; font-size: 24px; line-height: 1.3; letter-spacing: -.01em; color: var(--ink); }
+  h3 { margin: 28px 0 6px; font-size: 18px; color: var(--ink); }
+  p { margin: 0 0 16px; }
+
+  figure { margin: 24px 0 8px; }
+  .chart { display: block; width: 100%; border: 0; background: var(--surface); }
+  .chart.income { height: 520px; }
+  .chart.trend  { height: 440px; }
+  .chart.map    { height: 540px; }
+  .chart.miller { height: 470px; }
+  figcaption { margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+  figcaption strong { color: var(--ink-2); font-weight: 600; }
+
+  .sidebar { margin: 56px 0 0; padding: 4px 24px 20px; border-left: 3px solid var(--rural); background: var(--plane); border-radius: 0 10px 10px 0; }
+  .sidebar h2 { margin-top: 20px; }
+
+  .table-wrap { overflow-x: auto; margin: 16px 0 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { font-weight: 600; color: var(--ink); border-bottom-color: #c3c2b7; }
+  td.label { color: var(--ink-2); }
+
+  ul.plain { margin: 0 0 16px; padding-left: 20px; }
+  ul.plain li { margin-bottom: 6px; }
+
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 0; }
+  .cta a { display: inline-block; padding: 10px 16px; border: 1px solid var(--rule); border-radius: 8px; font-weight: 600; text-decoration: none; background: #fff; }
+  .cta a:hover { border-color: var(--accent); }
+  .cta .soon { padding: 10px 16px; border: 1px dashed var(--rule); border-radius: 8px; color: var(--muted); }
+
+  footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--muted); }
+
+  @media (max-width: 560px) {
+    body { font-size: 16px; padding: 0 16px; }
+    main { padding-block: 32px 56px; }
+    .dek { font-size: 18px; }
+    .chart.income { height: 440px; }
+    .chart.trend  { height: 380px; }
+    .chart.map    { height: 300px; }
+    .chart.miller { height: 520px; }
+    .sidebar { padding: 4px 16px 16px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <p class="eyebrow">Portfolio project &middot; Health economics</p>
+  <h1>Why does Medicare spend more in some counties than others?</h1>
+  <p class="dek">An analysis of standardized Medicare spending per beneficiary across about 3,000 US counties, 2014 to 2024, using SQL (DuckDB) and Python.</p>
+  <p class="byline">
+    <span>George Stenberg</span>
+        <a href="https://github.com/Stenberg1/medicare-county-spending">Code on GitHub</a>
+    <a href="#methods">Methods</a>
+  </p>
+</header>
+
+<ul class="findings" aria-label="Key findings">
+  <li><span class="num">37%</span><span class="what">growth in spending per beneficiary from 2014 to 2024, in metro and rural counties alike (nominal dollars)</span></li>
+  <li><span class="num">$620</span><span class="what">less per beneficiary in rural counties than in similar metro counties, after controlling for income, poverty, age, and Medicaid enrollment</span></li>
+  <li><span class="num">10&times;</span><span class="what">the national average on skilled nursing care in Miller County, GA, the highest-spending county in 2024</span></li>
+</ul>
+
+<section>
+  <h2>Where spending is high</h2>
+  <p>Medicare does not spend the same amount on everyone. In 2024 the middle 90% of counties ranged from about $9,500 to $15,500 per beneficiary, even after removing differences in local prices. Spending is highest in Florida, Oklahoma, and the Gulf South, and lowest in the Pacific Northwest, the northern Mountain West, northern New England, Alaska, and Hawaii.</p>
+  <figure>
+    <iframe class="chart map" src="charts/map.html" title="Map of Medicare spending per beneficiary by county, 2024" loading="lazy"></iframe>
+    <figcaption><strong>Medicare spending per beneficiary by county, 2024.</strong> Standardized dollars. Color scale capped at the 5th and 95th percentiles. Gray counties have fewer than 500 Original Medicare beneficiaries and are excluded.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Richer counties do not spend more</h2>
+  <p>A natural guess is that wealthier places use more care. The data show the opposite, at least weakly: higher-income counties spend slightly less per beneficiary, and the pattern is stronger among rural counties. Poorer counties have more beneficiaries who also qualify for Medicaid ("dual-eligible"), a group that tends to need more care.</p>
+  <figure>
+    <iframe class="chart income" src="charts/income.html" title="Scatter plot of county spending per beneficiary against median household income, 2024" loading="lazy"></iframe>
+    <figcaption><strong>Spending per beneficiary vs. median household income, 2024.</strong> One dot per county; lines are simple linear fits within metro and rural counties. Hover for county details.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Metro and rural counties grew at the same pace</h2>
+  <p>Metro counties spend more per beneficiary than rural ones every year, but the gap has been stable. Both grew about 37% between 2014 and 2024, with a dip in 2020 when the use of care fell during COVID-19.</p>
+  <figure>
+    <iframe class="chart trend" src="charts/trend.html" title="Line chart of spending per beneficiary in metro and rural counties, 2014 to 2024" loading="lazy"></iframe>
+    <figcaption><strong>Standardized spending per beneficiary, 2014 to 2024.</strong> Averages weighted by number of beneficiaries. Nominal dollars, not adjusted for inflation.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>What explains the differences?</h2>
+  <p>I regressed county spending per beneficiary on income, poverty, rurality, average age, the share of beneficiaries also on Medicaid, and the share of Medicare enrollees in Medicare Advantage, with year fixed effects and standard errors clustered by state. As a robustness check, I re-ran the model weighting each county by its number of beneficiaries.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Change in spending per beneficiary</th><th>Unweighted</th><th>Weighted</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="label">Rural county (vs. metro)</td><td>&minus;$616***</td><td>&minus;$858***</td></tr>
+        <tr><td class="label">+1 point poverty rate</td><td>+$89***</td><td>+$77**</td></tr>
+        <tr><td class="label">+$10,000 median income</td><td>&minus;$82</td><td>&minus;$90</td></tr>
+        <tr><td class="label">+1 year average age</td><td>+$257***</td><td>+$309***</td></tr>
+        <tr><td class="label">+1 point dual-eligible share</td><td>+$34**</td><td>+$34**</td></tr>
+        <tr><td class="label">+1 point Medicare Advantage share</td><td>+$1</td><td>+$12</td></tr>
+        <tr><td class="label">County-years</td><td>32,366</td><td>32,366</td></tr>
+        <tr><td class="label">R&sup2;</td><td>0.42</td><td>0.47</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:14px;color:var(--muted)">Year fixed effects included. Standard errors clustered by state (50 clusters). *** p&lt;0.01, ** p&lt;0.05.</p>
+
+  <ul class="plain">
+    <li><strong>Rurality matters once other factors are held constant.</strong> In the raw data, the typical metro and rural county spend almost the same. After accounting for rural counties' higher poverty and Medicaid enrollment, rural counties spend about $600 to $850 less per beneficiary.</li>
+    <li><strong>Poverty, not income, carries the signal.</strong> Income and poverty are closely related (correlation of about &minus;0.74). With both in the model, poverty is significant and income is not.</li>
+    <li><strong>The results are not driven by small counties.</strong> Weighting by beneficiaries keeps every sign and significance level and makes the rural gap larger. Dropping Miller County changes nothing meaningful.</li>
+  </ul>
+  <p>These are associations across counties, not causal effects. Standardized spending removes differences in prices, not in health, so part of the rural gap may reflect differences in health or in access to care.</p>
+</section>
+
+<aside class="sidebar" aria-labelledby="miller">
+  <h2 id="miller">Sidebar: Miller County, Georgia</h2>
+  <p>Miller County, a rural county in southwest Georgia, had the highest standardized spending of any county in the sample in 2024: $29,853 per beneficiary, more than double the national average of $12,553. Its spending rose from about $11,000 in 2014, with most of the increase coming after 2021.</p>
+  <p>The largest single difference is skilled nursing facility care: $8,691 per beneficiary, about 10 times the national $874. Miller is above the national average in most other categories too, including inpatient and outpatient hospital care.</p>
+  <figure>
+    <iframe class="chart miller" src="charts/miller.html" title="Bar chart comparing Miller County and US spending per beneficiary by type of service, 2024" loading="lazy"></iframe>
+    <figcaption><strong>Spending per beneficiary by type of service, 2024.</strong> Standardized dollars. Miller County had 559 Original Medicare beneficiaries in 2024, so a small number of long or costly stays can move its average substantially.</figcaption>
+  </figure>
+</aside>
+
+<section id="methods">
+  <h2>Data and methods</h2>
+  <h3>Data</h3>
+  <ul class="plain">
+    <li><strong>Medicare spending:</strong> CMS Medicare Geographic Variation Public Use File, 2014 to 2024, county level. The outcome is standardized spending per Original Medicare beneficiary, which removes geographic differences in Medicare payment rates.</li>
+    <li><strong>Income and poverty:</strong> US Census Bureau Small Area Income and Poverty Estimates (SAIPE), pulled from the Census API.</li>
+    <li><strong>Rurality:</strong> USDA Rural-Urban Continuum Codes, 2023. Codes 1 to 3 are metro; 4 to 9 are rural (nonmetro).</li>
+  </ul>
+  <h3>Sample</h3>
+  <p>Counties with fewer than 500 Original Medicare beneficiaries are excluded because their averages are noisy (the smallest county in the data had 14). US territories are excluded. The final panel has 32,699 county-years across 3,011 counties. More than 99.7% of rows match to the income and rurality data; the exceptions are Connecticut before its 2022 switch to planning regions and one Alaska area that was split in 2019.</p>
+  <h3>Tools</h3>
+  <p>DuckDB (SQL) for loading, reshaping, and joining; pandas and statsmodels for the regressions; Plotly for the charts.</p>
+  <div class="cta">
+        <a href="https://github.com/Stenberg1/medicare-county-spending">View the code on GitHub</a>
+    <span class="soon">County explorer: coming soon</span>
+  </div>
+</section>
+
+<footer>
+  <p>Sources: Centers for Medicare &amp; Medicaid Services; US Census Bureau; USDA Economic Research Service. County boundaries: Census Bureau 2023 cartographic boundary files.</p>
+  <p><a href="/">gstenberg.org</a></p>
+</footer>
+
+</main>
+</body>
+</html>

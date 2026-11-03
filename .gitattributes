@@ -1,0 +1,3 @@
+# Strip outputs from 03_charts on commit (the map makes it ~7 MB after a run).
+# The filter itself is set in .git/config; see README.
+notebooks/03_charts.ipynb filter=strip-notebook-output
