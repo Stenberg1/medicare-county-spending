@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Medicare Spending Across US Counties | George Stenberg</title>
 <meta name="description" content="How Medicare spending per beneficiary varies across about 3,000 US counties from 2014 to 2024, and what income, poverty, and rurality explain.">
+<link rel="canonical" href="https://gstenberg.org/medicare/">
+
+<!-- Link previews (LinkedIn, Slack, iMessage, etc.). Image made in notebooks/03_charts.ipynb. -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="gstenberg.org">
+<meta property="og:url" content="https://gstenberg.org/medicare/">
+<meta property="og:title" content="Why does Medicare spend more in some counties than others?">
+<meta property="og:description" content="An analysis of Medicare spending per beneficiary across about 3,000 US counties, 2014 to 2024, using SQL and Python.">
+<meta property="og:image" content="https://gstenberg.org/medicare/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Map of Medicare spending per beneficiary by US county, 2024. Spending is highest in the South and lowest in the Northwest.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Why does Medicare spend more in some counties than others?">
+<meta name="twitter:description" content="An analysis of Medicare spending per beneficiary across about 3,000 US counties, 2014 to 2024, using SQL and Python.">
+<meta name="twitter:image" content="https://gstenberg.org/medicare/og-image.png">
 <style>
   :root {
     color-scheme: light;
@@ -52,6 +68,7 @@
   .chart.trend  { height: 440px; }
   .chart.map    { height: 540px; }
   .chart.miller { height: 470px; }
+  .chart.unexplained { height: 480px; }
   figcaption { margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--muted); }
   figcaption strong { color: var(--ink-2); font-weight: 600; }
 
@@ -83,6 +100,7 @@
     .chart.trend  { height: 380px; }
     .chart.map    { height: 300px; }
     .chart.miller { height: 520px; }
+    .chart.unexplained { height: 270px; }
     .sidebar { padding: 4px 16px 16px; }
   }
 </style>
@@ -163,6 +181,17 @@
     <li><strong>The results are not driven by small counties.</strong> Weighting by beneficiaries keeps every sign and significance level and makes the rural gap larger. Dropping Miller County changes nothing meaningful.</li>
   </ul>
   <p>These are associations across counties, not causal effects. Standardized spending removes differences in prices, not in health, so part of the rural gap may reflect differences in health or in access to care.</p>
+</section>
+
+<section>
+  <h2>Spending the model can't explain</h2>
+  <p>The model accounts for about 42% of the variation in spending. The rest is the gap between what a county actually spends and what the model predicts for a county with the same income, poverty, age, Medicaid enrollment, Medicare Advantage share, and rurality. Red counties spend more than predicted; blue counties spend less.</p>
+  <figure>
+    <iframe class="chart unexplained" src="charts/unexplained.html" title="Map of the difference between actual and predicted Medicare spending per beneficiary by county, 2024" loading="lazy"></iframe>
+    <figcaption><strong>Unexplained spending per beneficiary, 2024.</strong> Actual minus predicted standardized spending, using the unweighted regression above. Color scale capped at <span style="white-space:nowrap">&plusmn;$3,500</span> (the 95th percentile). Dark gray counties are not in the sample.</figcaption>
+  </figure>
+  <p>The pattern is regional. Accounting for population, Florida, Oklahoma, Texas, Mississippi, and New Jersey spend about $1,500 to $2,100 more per beneficiary than predicted, while Hawaii, Alaska, Oregon, New Mexico, Vermont, and Washington spend about $2,000 to $3,700 less. Miller County, GA is the largest outlier, about $16,700 above its prediction.</p>
+  <p>The gaps are also persistent. A county's unexplained spending in 2014 to 2018 is strongly correlated with its unexplained spending in 2020 to 2024 (correlation of 0.88), which suggests lasting features of each place rather than year-to-year noise. Research on regional variation, most famously the Dartmouth Atlas of Health Care, has linked gaps like these to local practice patterns and the supply of hospitals and specialists, as well as to differences in health that county averages miss. This analysis does not separate those explanations.</p>
 </section>
 
 <aside class="sidebar" aria-labelledby="miller">

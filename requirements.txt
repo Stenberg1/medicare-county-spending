@@ -7,6 +7,7 @@ requests==2.34.2
 python-dotenv==1.2.4
 jupyter==1.1.1
 streamlit==1.66.1  # county explorer (app/)
+kaleido==1.5.0  # saves Plotly charts as PNG (uses Google Chrome)
 
 # Only needed to rebuild data/counties_2023.geojson (scripts/make_county_geojson.py):
 # pyshp
