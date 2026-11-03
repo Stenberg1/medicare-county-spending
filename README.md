@@ -6,6 +6,8 @@ Why does Medicare spend more per person in some counties than others? This proje
 
 ![Python](https://img.shields.io/badge/Python-3.14-blue) ![DuckDB](https://img.shields.io/badge/SQL-DuckDB-yellow) ![statsmodels](https://img.shields.io/badge/stats-statsmodels-lightgrey) ![Plotly](https://img.shields.io/badge/charts-Plotly-purple)
 
+**County explorer:** pick any county and compare it with the 10 counties most like it (`app/explorer.py`, built with Streamlit).
+
 ## Key findings
 
 - **Spending grew about 37%** per beneficiary from 2014 to 2024 (nominal), at the same pace in metro and rural counties.
@@ -44,6 +46,10 @@ County-year panel, 2014 to 2024. Outcome: standardized Medicare spending per ben
 
 **Sample:** counties with at least 500 Original Medicare beneficiaries (smaller counties have very noisy averages), 50 states, US territories excluded. 32,699 county-years across 3,011 counties. Over 99.7% of rows match the income and rurality data; the exceptions are Connecticut before its 2022 switch to planning regions and one Alaska area that was split in 2019.
 
+## County explorer: how similar counties are chosen
+
+Counties are matched on income, poverty, average age, dual-eligible share, Medicare Advantage share, and rural-urban code, **never on spending**, so the comparison asks: among counties like this one, does it spend more or less? Each variable is converted to a z-score within its year, and the similar counties are those with the smallest Euclidean distance across the six z-scores (equal weights).
+
 ## Repository
 
 ```
@@ -52,7 +58,11 @@ notebooks/
   02_merge.ipynb            reshape RUCC, merge everything, check match rates
   03_charts.ipynb           exploratory charts; exports the website charts
   04_regression.ipynb       OLS and weighted regressions, robustness checks
+  05_export_app_data.ipynb  z-scores for matching; writes app/data/*.parquet
   plot_style.py             shared chart colors and fonts
+app/
+  explorer.py               Streamlit county explorer
+  data/                     the app's data (small Parquet files, committed)
 scripts/
   make_county_geojson.py    builds the county map file from Census shapefiles
 site/medicare/              the project web page and its interactive charts
@@ -72,7 +82,11 @@ data/                       input files (see table above)
    ```
    CENSUS_API_KEY=your_key_here
    ```
-4. Run the notebooks in order, 01 to 04. They build `medicare.duckdb` and write the website charts to `site/medicare/charts/`.
+4. Run the notebooks in order, 01 to 05. They build `medicare.duckdb`, write the website charts to `site/medicare/charts/`, and export the explorer's data to `app/data/`.
+5. Start the county explorer:
+   ```bash
+   streamlit run app/explorer.py
+   ```
 
 DuckDB allows only one program to write to the database at a time, so close the connection (`con.close()`) in one notebook before running the next.
 
