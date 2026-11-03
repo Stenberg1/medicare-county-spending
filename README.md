@@ -6,7 +6,7 @@ Why does Medicare spend more per person in some counties than others? This proje
 
 ![Python](https://img.shields.io/badge/Python-3.14-blue) ![DuckDB](https://img.shields.io/badge/SQL-DuckDB-yellow) ![statsmodels](https://img.shields.io/badge/stats-statsmodels-lightgrey) ![Plotly](https://img.shields.io/badge/charts-Plotly-purple)
 
-**County explorer:** pick any county and compare it with the 10 counties most like it (`app/explorer.py`, built with Streamlit).
+**[County explorer](https://medicare-county-spending-lcjbh9guvrrpwwaejzdwks.streamlit.app/):** pick any county and compare it with the 10 counties most like it (`app/explorer.py`, built with Streamlit).
 
 ## Key findings
 
